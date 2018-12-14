@@ -61,6 +61,8 @@ export class App extends React.Component {
     this.data = null;
   }
 
+  //save時にglobalCompositeOperationがsaveされない為、
+  //load時にはerase情報がsource-overでloadされ惜しい感じになる
   render = () => {
     return (
       <Panel>
@@ -77,6 +79,9 @@ export class App extends React.Component {
                   onClick={e => {
                     this.brush.color = this.brush.defaultColor;
                     this.brush.radius = this.brush.defaultRadius;
+                    this.refs.canvas.canvas.drawing.getContext(
+                      "2d"
+                    ).globalCompositeOperation = "source-over";
                     this.setState({ flg: true });
                   }}
                 >
@@ -88,6 +93,9 @@ export class App extends React.Component {
                   onClick={e => {
                     this.brush.color = this.erase.color;
                     this.brush.radius = this.erase.radius;
+                    this.refs.canvas.canvas.drawing.getContext(
+                      "2d"
+                    ).globalCompositeOperation = "destination-out";
                     this.setState({ flg: true });
                   }}
                 >
@@ -121,6 +129,20 @@ export class App extends React.Component {
                 <Glyphicon glyph={this.glyph.openfile} />
                 {this.title.openfile}
               </Button>
+              <Button
+                onClick={e => {
+                  console.log(this.refs.canvas);
+                  console.log("----------");
+                  console.log(this.refs.canvas.canvas);
+                  console.log("----------");
+                  console.log(
+                    this.refs.canvas.canvas.drawing.getContext("2d")
+                      .globalCompositeOperation
+                  );
+                }}
+              >
+                Check
+              </Button>
             </ButtonToolbar>
             <FormControl
               type="text"
@@ -137,6 +159,7 @@ export class App extends React.Component {
               boxShadow:
                 "0 13px 27px -5px rgba(50, 50, 93, 0.25),    0 8px 16px -8px rgba(0, 0, 0, 0.3)"
             }}
+            lazyRadius={0}
             brushColor={this.brush.color}
             brushRadius={this.brush.radius}
             canvasWidth={this.demension.width}
